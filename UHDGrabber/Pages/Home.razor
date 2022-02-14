@@ -1,0 +1,14 @@
+@page "/Home"
+@using UHDGrabber.Data
+@using UHDGrabber.Services
+@inject RadarrGrabberService radarrGrabberService
+
+<p>
+    Enter Radarr API key:
+    <input @bind="radarrGrabberService.RadarrApiKey"/>
+</p>
+
+<ul>
+    <li>Key set as: @radarrGrabberService.RadarrApiKey</li>
+</ul>
+
