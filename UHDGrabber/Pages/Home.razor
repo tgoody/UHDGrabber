@@ -1,14 +1,49 @@
 @page "/Home"
-@using UHDGrabber.Data
 @using UHDGrabber.Services
-@inject RadarrGrabberService radarrGrabberService
+@inject RadarrGrabberService _radarrGrabberService
+@inject DataManagerService _dataManagerService
 
 <p>
     Enter Radarr API key:
-    <input @bind="radarrGrabberService.RadarrApiKey"/>
+    <input @bind="_radarrGrabberService.RadarrApiKey"/>
+</p>
+<p>
+    Enter Radarr IP Address:
+    <input @bind="_radarrGrabberService.RadarrIp"/>
 </p>
 
+<button @onclick="_dataManagerService.SaveDataToFile">
+    Save changes
+</button>
+
+<button @onclick="CallTestFunction">
+    Test Radarr
+</button>
+
+@code{
+
+    bool radarrConnectSuccess;
+    async Task CallTestFunction()
+    {
+        radarrConnectSuccess = await _radarrGrabberService.TestConfig();
+    }
+}
+
+<p>
+    @radarrConnectSuccess
+</p>
+
+@if (radarrConnectSuccess)
+{
+    <button onclick="@_radarrGrabberService.PullAllMovies">
+        Collect movies from Radarr DB
+    </button>
+}
+
 <ul>
-    <li>Key set as: @radarrGrabberService.RadarrApiKey</li>
+    <li>Key set as: @_radarrGrabberService.RadarrApiKey</li>
+</ul>
+<ul>
+    <li>IP set as: @_radarrGrabberService.RadarrIp</li>
 </ul>
 
