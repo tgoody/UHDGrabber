@@ -67,9 +67,16 @@ public class DataManagerService
                 currRadarrMovies.Where(currMovie => 
                     !LocalMovieContainers.Select(mvc => mvc.ImdbId).Contains(currMovie.ImdbId)));
             //should append newly found movies
+            SaveDataToFile();
+            return;
         }
         LocalMovieContainers = await _radarrGrabberService.PullAllMovies();
         SaveDataToFile();
+    }
+
+    private void MergeMovieContainers(LocalMovieContainer newMovieContainers)
+    {
+        
     }
 
     public async Task StartIndexerSearch()

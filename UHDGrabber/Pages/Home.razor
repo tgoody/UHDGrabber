@@ -56,7 +56,40 @@
     <li>IP set as: @_radarrGrabberService.RadarrIp</li>
 </ul>
 
-
+<table title="MoviesTable">
+    <tr>
+        <th>Movie Title</th>
+        <th>Movie IMDB ID</th>
+        <th>Last Searched</th>
+        <th>Download Data</th>
+    </tr>
+    <Virtualize Items="@DataManagerService.LocalMovieContainers" Context="MovieContainer">
+        <tr>
+            <td>@MovieContainer.MovieName</td>
+            <td>@MovieContainer.ImdbId</td>
+            <td>@MovieContainer.LastSearched</td>
+            <td>
+                <table title="MagnetLinks">
+                    <tr>
+                        <th>Torrent Filename</th>
+                        <th>Torrent Category</th>
+                        <th>Magnet Link</th>
+                    </tr>
+                    @{
+                        foreach (var downloadObject in MovieContainer.DownloadObjects)
+                        {
+                            <tr>
+                                <td>@downloadObject.filename</td>
+                                <td>@downloadObject.category</td>
+                                <td><a href="@downloadObject.magnetLink">Link</a></td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </td>
+        </tr>
+    </Virtualize>
+</table>
 
 
 
