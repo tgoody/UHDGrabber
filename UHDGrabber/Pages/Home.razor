@@ -35,9 +35,18 @@
 
 @if (radarrConnectSuccess)
 {
-    <button onclick="@_radarrGrabberService.PullAllMovies">
-        Collect movies from Radarr DB
-    </button>
+    if (!_dataManagerService.HasMovies)
+    {
+        <button @onclick="_dataManagerService.PullRadarrMovies">
+            Collect movies from Radarr DB
+        </button>
+    }
+    else
+    {
+        <button @onclick="_dataManagerService.StartIndexerSearch">
+            Start Searching
+        </button>
+    }
 }
 
 <ul>
@@ -46,4 +55,8 @@
 <ul>
     <li>IP set as: @_radarrGrabberService.RadarrIp</li>
 </ul>
+
+
+
+
 

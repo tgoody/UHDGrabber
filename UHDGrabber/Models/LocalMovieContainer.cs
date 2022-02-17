@@ -4,15 +4,22 @@ namespace UHDGrabber.Data;
 
 public class LocalMovieContainer
 {
+    public class DownloadObject
+    {
+        public string filename { get; set; }
+        public string category { get; set; }
+        [JsonProperty("download")]
+        public string magnetLink { get; set; }
+    }
+    
     [JsonProperty("title")]
-    private string _movieName;
-    
+    public string MovieName { get; set; }
+
     [JsonProperty("imdbId")]
-    private string _imdbId;
+    public string ImdbId { get; set; }
+
+    [JsonProperty("magnet_links")] 
+    public List<DownloadObject>? DownloadObjects { get; set; } = new();
     
-    [JsonProperty("magnet_links")]
-    private List<string> _magnetLinks;
-
-
-
+    public DateTime? LastSearched { get; set; }
 }
