@@ -22,4 +22,5 @@ public class LocalMovieContainer
     public List<DownloadObject>? DownloadObjects { get; set; } = new();
     
     public DateTime? LastSearched { get; set; }
+    public string? ImageUrl { get; set; }
 }

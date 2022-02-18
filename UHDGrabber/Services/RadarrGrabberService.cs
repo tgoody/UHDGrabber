@@ -1,5 +1,6 @@
 using System.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UHDGrabber.Data;
 
 namespace UHDGrabber.Services;
@@ -32,10 +33,21 @@ public class RadarrGrabberService
     
     public async Task<List<LocalMovieContainer>> PullAllMovies()
     {
+        var resultMovies = new List<LocalMovieContainer>();
+        
         var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(3));
         var response = await _httpClient.GetAsync($"{RadarrUrl}/{apiString}/movie?apiKey={RadarrApiKey}", cancellationToken.Token);
         var responseText = await response.Content.ReadAsStringAsync();
-
-        return JsonConvert.DeserializeObject<List<LocalMovieContainer>>(responseText);
+        
+        var radarrMovies = JArray.Parse(responseText);
+        foreach (var movie in radarrMovies)
+        {
+            var newContainer = movie.ToObject<LocalMovieContainer>();
+            var movieImagesJson = movie["images"] as JArray;
+            newContainer.ImageUrl = (string?)movieImagesJson?.FirstOrDefault(mv => (string?) mv["coverType"] == "poster")?["remoteUrl"];
+            resultMovies.Add(newContainer);
+        }
+        
+        return resultMovies;
     }
 }

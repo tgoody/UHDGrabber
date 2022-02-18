@@ -56,40 +56,50 @@
     <li>IP set as: @_radarrGrabberService.RadarrIp</li>
 </ul>
 
-<table title="MoviesTable">
-    <tr>
-        <th>Movie Title</th>
-        <th>Movie IMDB ID</th>
-        <th>Last Searched</th>
-        <th>Download Data</th>
-    </tr>
-    <Virtualize Items="@DataManagerService.LocalMovieContainers" Context="MovieContainer">
-        <tr>
-            <td>@MovieContainer.MovieName</td>
-            <td>@MovieContainer.ImdbId</td>
-            <td>@MovieContainer.LastSearched</td>
-            <td>
-                <table title="MagnetLinks">
-                    <tr>
-                        <th>Torrent Filename</th>
-                        <th>Torrent Category</th>
-                        <th>Magnet Link</th>
-                    </tr>
-                    @{
-                        foreach (var downloadObject in MovieContainer.DownloadObjects)
-                        {
-                            <tr>
-                                <td>@downloadObject.filename</td>
-                                <td>@downloadObject.category</td>
-                                <td><a href="@downloadObject.magnetLink">Link</a></td>
-                            </tr>
-                        }
-                    }
-                </table>
-            </td>
-        </tr>
-    </Virtualize>
-</table>
+<div style="height:600px;overflow-y:scroll">
 
+    <table title="MoviesTable" id="MoviesTable">
+        <tr>
+            <th></th>
+            <th>Movie Title</th>
+            <th>Movie IMDB ID</th>
+            <th>Last Searched</th>
+            <th>Download Data</th>
+        </tr>
+        @{
+            foreach (var movieContainer in DataManagerService.LocalMovieContainers.OrderByDescending(it => it.DownloadObjects?.Count > 0).ThenBy(it => it.MovieName))
+            {
+                <tr>
+                    <td><img id="poster" src="@movieContainer.ImageUrl" alt="@movieContainer.MovieName"/></td>
+                    <td>@movieContainer.MovieName</td>
+                    <td>@movieContainer.ImdbId</td>
+                    <td>@movieContainer.LastSearched.GetValueOrDefault()</td>
+                    <td>
+                        <table title="MagnetLinks" id="MagnetLinks">
+                            @{
+                                if (movieContainer.DownloadObjects?.Count > 0)
+                                {
+                                    <tr>
+                                        <th>Torrent Filename</th>
+                                        <th>Torrent Category</th>
+                                        <th>Magnet Link</th>
+                                    </tr>
+                                    foreach (var downloadObject in movieContainer.DownloadObjects)
+                                    {
+                                        <tr>
+                                            <td>@downloadObject.filename</td>
+                                            <td>@downloadObject.category</td>
+                                            <td><a href="@downloadObject.magnetLink">Link</a></td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </table>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
 
 

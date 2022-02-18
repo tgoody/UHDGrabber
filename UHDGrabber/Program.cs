@@ -12,6 +12,8 @@ builder.Services.AddSingleton<RadarrGrabberService>();
 builder.Services.AddSingleton<IndexerSearchService>();
 builder.Services.AddSingleton<DataManagerService>();
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

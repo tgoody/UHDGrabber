@@ -21,7 +21,7 @@ public class IndexerSearchService
         }
     };
     private DateTime? _lastSearchRequest = null;
-    private TimeSpan _timeBetweenRequests = TimeSpan.FromSeconds(5);
+    private TimeSpan _timeBetweenRequests = TimeSpan.FromSeconds(10);
 
     public IndexerSearchService()
     {
@@ -56,7 +56,7 @@ public class IndexerSearchService
         _lastSearchRequest = DateTime.Now;
         var searchUrl = baseUrl + 
                         $"mode=search&search_imdb={localMovieContainer.ImdbId}&category=movies&category=50;51;52&limit=100" +
-                        $"&token={rarbgToken}&app_id=UHDGrabber";
+                        $"&sort=seeders&token={rarbgToken}&app_id=UHDGrabber";
 
         var response = await _httpClient.GetAsync(searchUrl);
         var responseString = await response.Content.ReadAsStringAsync();

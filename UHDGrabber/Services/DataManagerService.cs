@@ -60,30 +60,31 @@ public class DataManagerService
 
     public async Task PullRadarrMovies()
     {
-        if (LocalMovieContainers.Count > 0)
-        {
-            var currRadarrMovies = await _radarrGrabberService.PullAllMovies();
-            LocalMovieContainers.AddRange(
-                currRadarrMovies.Where(currMovie => 
-                    !LocalMovieContainers.Select(mvc => mvc.ImdbId).Contains(currMovie.ImdbId)));
-            //should append newly found movies
-            SaveDataToFile();
-            return;
-        }
-        LocalMovieContainers = await _radarrGrabberService.PullAllMovies();
+        
+        var newMovieContainers = await _radarrGrabberService.PullAllMovies();
+        MergeMovieContainers(newMovieContainers);
         SaveDataToFile();
     }
 
-    private void MergeMovieContainers(LocalMovieContainer newMovieContainers)
+    private void MergeMovieContainers(List<LocalMovieContainer> newMovieContainers)
     {
-        
+        foreach (var newMovie in newMovieContainers)
+        {
+            var matchedMovie = LocalMovieContainers.SingleOrDefault(mv => mv.ImdbId == newMovie.ImdbId);
+            if (matchedMovie == null)
+                continue;
+            newMovie.LastSearched = matchedMovie.LastSearched;
+            newMovie.DownloadObjects = matchedMovie.DownloadObjects;
+        }
+
+        LocalMovieContainers = newMovieContainers;
     }
 
     public async Task StartIndexerSearch()
     {
         var moviesWithoutMagnetLinks = LocalMovieContainers.Where(
             mv => mv.DownloadObjects == null || mv.DownloadObjects.Count <= 0).
-            OrderBy(mv => !mv.LastSearched.HasValue).OrderBy(mv => mv.LastSearched);
+            OrderBy(mv => !mv.LastSearched.HasValue).ThenBy(mv => mv.LastSearched);
         foreach (var movie in moviesWithoutMagnetLinks)
         {
             movie.LastSearched = DateTime.Now;
